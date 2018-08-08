@@ -3,88 +3,86 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour {
-
-	public CircleCollider2D aggroCollider;
-	public float aggroRange;
+    
 	public Vision vision;
-	//public Text text;
+    public float patrolDist;
+
+
+    
 
 	private Move move;
 	private Vector3 aiMovement;
+    //private Vector3 startLoc;
 
-	// Use this for initialization
+    
 	void Start () {
-		aggroCollider.radius = aggroRange;
 		vision = gameObject.GetComponent<Vision> ();
 		move = GetComponent<Move> ();
-	//	text.text = "";
-	}
+        GameManager.instance.enemyCount++;
+        //startLoc = transform.position;
+        
+    }
 	
-	// Update is called once per frame
-	void Update () 
-	{
-	//	RestartCheck();
-
-		if (GameManager.instance.gameState == "Game") 
-		{
-			if (vision.canSee (GameManager.instance.player.gameObject)) 
-			{
-				GameManager.instance.ChangeAIState ("Found");
-			}
-
-			if (GameManager.instance.aiState == "Search") 
-			{
-		//		text.text = "";
-			//	Movement ("up");
-			}
-
-			if (GameManager.instance.aiState == "Found")
-			{
-		//		text.text = "!!";
-				aiMovement = GameManager.instance.player.transform.position - transform.position;
-				aiMovement.Normalize ();
-				transform.right = aiMovement;
-				transform.position += aiMovement * Time.deltaTime * move.kineticForce;
-			}
-
-		}
-			
-		if (GameManager.instance.gameState == "Start") 
-		{
-			GameManager.instance.ChangeAIState ("Search");
-		}
-			
+	void Update ()  {
+        Regulate();
+        Move();
+        
+		//if (GameManager.instance.gameState == GameState.START)
+  //      {
+		//	GameManager.instance.ChangeAIState (AiState.SEARCH);
+		//}
 	}
 
 
-	public void OnTriggerEnter2D(Collider2D collision)
-	{
-		Sound other = collision.GetComponent<Sound> ();
-		if (other == null) 
-		{
+    public void Regulate()
+    {
+        if (GameManager.instance.enemyCount >= 5)
+        {
+            GameManager.instance.enemyCount -= 1;
+            Debug.Log("Hello master, i'm ready to serv-- OOMF");
+            Destroy(this.gameObject);
+        }
+    }
 
-		} 
-		else if (collision == other.volume) 
-		{
-			GameManager.instance.ChangeAIState("");
-		}
-	
+    void Move()
+    {
+        if (GameManager.instance.gameState == GameState.GAME)
+        {
+            switch (GameManager.instance.aiState)
+            {
+                case AiState.SEARCH:
+                    move.Movement(Dir.UP);
+                    //transform.position += transform.right * move.kineticForce * Time.deltaTime;
+                    break;
+                case AiState.FOUND:
+                    aiMovement = GameManager.instance.player.transform.position - transform.position;
+                    aiMovement.Normalize();
+                    transform.right = aiMovement;
+                    transform.position += aiMovement * Time.deltaTime * move.kineticForce;
+                    break;
+            }
+        }
+    }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Sound other = collision.GetComponent<Sound>();
 
-	}
+        //if (collision == other.volume)
+        //{
+        //    GameManager.instance.ChangeAIState("Found");
+        //}
+        if ( collision.tag == "Boundary")
+        {
+            transform.Rotate(0, 0, 180);
+        }
+    }
 
-	public void OnTCollisionEnter2D(Collider2D collision)
+    public void OnCollisionEnter2D(Collision2D collision)
 	{
 		if (collision.gameObject.tag.Equals ("Player")) 
 		{
-
-			GameManager.instance.ChangeState ("GameOver");
-
+			GameManager.instance.ChangeState (GameState.GAMEOVER);
 		}
-
-
-
-
-
 	}
 }

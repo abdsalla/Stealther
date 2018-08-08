@@ -13,32 +13,32 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
 		if (Input.GetKey ("up") || Input.GetKey ("w"))
 			{
-			move.gameObject.GetComponent<Move>().Movement("up");
+			move.gameObject.GetComponent<Move>().Movement(Dir.UP);
 			}
 
 		if (Input.GetKey ("down") || Input.GetKey ("s"))
 			{
-			move.gameObject.GetComponent<Move>().Movement("down");
+			move.gameObject.GetComponent<Move>().Movement(Dir.DOWN);
 			}
 
 		if (Input.GetKey ("left") || Input.GetKey ("a"))
 			{
-			move.gameObject.GetComponent<Move>().Movement("left");
+			move.gameObject.GetComponent<Move>().Movement(Dir.LEFT);
 			}
 
 		if (Input.GetKey ("right") || Input.GetKey ("d"))
 			{
-			move.gameObject.GetComponent<Move>().Movement("right");
+			move.gameObject.GetComponent<Move>().Movement(Dir.RIGHT);
 			}
 
 
 
-		if (Input.GetKeyDown (KeyCode.Space) && GameManager.instance.gameState == "Game")
-		{
-			GameManager.instance.ChangeState ("Pause");
+		//if (Input.GetKeyDown (KeyCode.Space) && GameManager.instance.gameState == "Game")
+		if (Input.GetKeyDown (KeyCode.Space) && GameManager.instance.gameState == GameState.GAME)
+        {
+			//GameManager.instance.ChangeState ("Pause");
 		}
 
 		GameManager.instance.mainCamera.transform.position = new Vector3(transform.position.x, transform.position.y, GameManager.instance.mainCamera.transform.position.z);
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour {
 	{
 		if (collision.gameObject.tag.Equals ("Goal")) 
 		{
-			GameManager.instance.ChangeState ("Win");
-		}
+			GameManager.instance.ChangeState (GameState.WIN);
+        }
 	}
 }

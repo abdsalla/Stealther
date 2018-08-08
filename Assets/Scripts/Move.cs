@@ -6,31 +6,35 @@ public class Move : MonoBehaviour {
 
 	public float kineticForce;
 	public float kineticTurnForce;
-//	public Rigidbody2D tRB;
+  //  public Transform trans;
+	//public Rigidbody2D tRB;
 	// Use this for initialization
 	void Start () {
-		//tRB = GetComponent<Rigidbody2D> ();
+        //tRB = GetComponent<Rigidbody2D> ();
+       // trans = GetComponent<Transform>();
 	}
 		
 
-	public void Movement(string direction)
+	public void Movement(Dir direction)
 	{
-		if (direction == "up")
+		if (direction == Dir.UP)
 		{
-			transform.position += transform.right * Time.deltaTime * kineticForce;
-		//	tRB.AddForce (transform.up * Time.deltaTime * kineticForce, ForceMode2D.Force);
+            transform.position += transform.right * kineticForce * Time.deltaTime;
+          //  transform.position += Vector3.up * kineticForce * Time.deltaTime;
+			//tRB.AddForce (transform.up * Time.deltaTime * kineticForce, ForceMode2D.Force);
 		}
-		if (direction == "down")
+		if (direction == Dir.DOWN)
 		{
-			transform.position -= transform.right * Time.deltaTime * kineticForce;
-			//tRB.AddForce (-transform.up * Time.deltaTime * kineticForce, ForceMode2D.Force);
-		}
-		if (direction == "right")
+            transform.position -= transform.right * kineticForce * Time.deltaTime;
+          //  transform.position -= Vector3.up * kineticForce * Time.deltaTime;
+            //tRB.AddForce (-transform.up * Time.deltaTime * kineticForce, ForceMode2D.Force);
+        }
+		if (direction == Dir.RIGHT)
 		{
 			transform.Rotate(-Vector3.forward * Time.deltaTime * kineticTurnForce);
 			//  tRB.AddForce (transform.Rotate(Vector3.forward * Time.deltaTime * -kineticTurnForce));
 		}
-		if (direction == "left")
+		if (direction == Dir.LEFT)
 		{
 			transform.Rotate(Vector3.forward * Time.deltaTime * kineticTurnForce);
 			//	tRB.AddForce (transform.Rotate(-Vector3.forward * Time.deltaTime * -kineticTurnForce));
@@ -40,9 +44,18 @@ public class Move : MonoBehaviour {
 
 	public void RestartCheck()
 	{
-		if (GameManager.instance.gameState == "Start") 
-		{
+		//if (GameManager.instance.gameState == "Start") 
+		if (GameManager.instance.gameState == GameState.START)
+            {
 			Destroy (gameObject);
 		}
 	}
+}
+
+public enum Dir
+{
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT
 }
